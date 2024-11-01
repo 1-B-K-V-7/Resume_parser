@@ -55,7 +55,8 @@ Environment Variables
 API_KEY: This variable holds your Google Generative AI API key. It is required for interacting with the AI service to parse resumes.
 
 
-##Concept and Working
+
+## Concept and Working
 
 File Upload: Users can upload resumes in either DOCX or PDF format through the web interface.
 File Conversion: If the uploaded file is a DOCX, the application converts it to PDF using docx2pdf.
@@ -76,10 +77,11 @@ Current Position
 Years of Experience (calculated accurately based on the current date)
 Result Presentation: The extracted data is formatted using Markdown and displayed on the web interface.
 
-##Assumptions and Limitations
+
+## Assumptions and Limitations
 The application is designed for DOCX and PDF formats, and deviations from these may lead to errors in processing. It relies on structured resumes, meaning unconventional layouts may impact data extraction accuracy.
 
-##Future Improvements
+## Future Improvements
 Future iterations aim to enhance parsing accuracy with unstructured resumes  and support additional file formats for user convenience. Improvements will also focus on developing a more interactive UI for editing parsed data and refining error handling for clearer user guidance.
 
                                                            ****************
