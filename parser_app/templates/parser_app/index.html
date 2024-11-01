@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Resume Parser</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --secondary: #9333ea;
+            --bg-gradient: linear-gradient(135deg, #6366f1, #9333ea);
+            --surface: #ffffff;
+            --bg: #f8fafc;
+            --text: #0f172a;
+            --text-light: #64748b;
+        }
+
+        body {
+            background: var(--bg);
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            min-height: 100vh;
+            color: var(--text);
+            position: relative;
+        }
+
+        .page-container {
+            position: relative;
+            z-index: 1;
+            padding: 2rem;
+        }
+
+        .background-shapes {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            overflow: hidden;
+            opacity: 0.1;
+        }
+
+        .shape {
+            position: absolute;
+            background: var(--bg-gradient);
+            border-radius: 50%;
+        }
+
+        .shape-1 {
+            width: 300px;
+            height: 300px;
+            top: -150px;
+            left: -150px;
+            filter: blur(30px);
+        }
+
+        .shape-2 {
+            width: 400px;
+            height: 400px;
+            bottom: -200px;
+            right: -200px;
+            filter: blur(40px);
+        }
+
+        .main-card {
+            background: var(--surface);
+            border-radius: 24px;
+            padding: 3rem;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            max-width: 800px;
+            margin: 2rem auto;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .glass-effect {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 80px;
+            background: linear-gradient(to bottom right, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.05));
+            transform: skewY(-3deg) translateY(-40px);
+        }
+
+        .title {
+            font-size: 2.5rem;
+            font-weight: 800;
+            text-align: center;
+            margin-bottom: 3rem;
+            background: var(--bg-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            position: relative;
+        }
+
+        .title-emoji {
+            font-size: 3rem;
+            position: absolute;
+            top: -20px;
+            right: 50%;
+            transform: translateX(120px);
+            animation: floating 3s ease-in-out infinite;
+        }
+
+        .drop-zone {
+            border: 2px dashed #e2e8f0;
+            border-radius: 16px;
+            padding: 2.5rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            background: #f8fafc;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .drop-zone:hover, .drop-zone.drag-over {
+            border-color: var(--primary);
+            background: #f1f5f9;
+            transform: translateY(-2px);
+        }
+
+        .drop-zone::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 100%;
+            background: linear-gradient(45deg, transparent, rgba(99, 102, 241, 0.1), transparent);
+            transform: translateX(-100%);
+            transition: transform 0.5s;
+        }
+
+        .drop-zone:hover::before {
+            transform: translateX(100%);
+        }
+
+        .upload-icon {
+            width: 64px;
+            height: 64px;
+            background: var(--bg-gradient);
+            border-radius: 50%;
+            margin: 0 auto 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+        }
+
+        .file-input {
+            display: none;
+        }
+
+        .parse-button {
+            background: var(--bg-gradient);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 12px;
+            font-weight: 600;
+            width: 100%;
+            margin-top: 2rem;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .parse-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(99, 102, 241, 0.2);
+        }
+
+        .parse-button::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transform: translateX(-100%);
+        }
+
+        .parse-button:hover::after {
+            transform: translateX(100%);
+            transition: transform 0.5s;
+        }
+
+        .result-section {
+            margin-top: 3rem;
+            animation: slideUp 0.5s ease-out;
+        }
+
+        .result-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .result-content {
+            background: #f8fafc;
+            border-radius: 12px;
+            padding: 1.5rem;
+            border: 1px solid #e2e8f0;
+            font-family: 'Fira Code', monospace;
+            line-height: 1.6;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .footer {
+            text-align: center;
+            color: var(--text-light);
+            padding: 2rem;
+            font-size: 0.875rem;
+        }
+
+        @keyframes floating {
+            0%, 100% { transform: translateY(0) translateX(120px); }
+            50% { transform: translateY(-10px) translateX(120px); }
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #94a3b8;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #64748b;
+        }
+
+        @media (max-width: 768px) {
+            .page-container {
+                padding: 1rem;
+            }
+
+            .main-card {
+                padding: 2rem;
+                margin: 1rem;
+            }
+
+            .title {
+                font-size: 2rem;
+            }
+
+            .title-emoji {
+                font-size: 2.5rem;
+                transform: translateX(100px);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="background-shapes">
+        <div class="shape shape-1"></div>
+        <div class="shape shape-2"></div>
+    </div>
+
+    <div class="page-container">
+        <div class="main-card">
+            <div class="glass-effect"></div>
+            <h1 class="title animate__animated animate__fadeIn">
+                Resume Parser
+                <span class="title-emoji">📄</span>
+            </h1>
+
+            <form action="" method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="drop-zone" id="dropZone">
+                    <div class="upload-icon">
+                        ↑
+                    </div>
+                    <h3 class="mb-2">Drop your resume here</h3>
+                    <p class="text-light">or click to browse</p>
+                    <p class="text-muted small">Supported formats: PDF, DOCX</p>
+                    <input type="file" name="resume" id="resume" class="file-input" 
+                           accept=".pdf,.docx" required>
+                </div>
+                <p id="selectedFile" class="mt-3 text-center text-muted"></p>
+                
+                <button type="submit" class="parse-button">
+                    Parse Resume
+                </button>
+            </form>
+
+            {% if result %}
+            <div class="result-section">
+                <h2 class="result-title">
+                    <span class="result-icon">✨</span>
+                    Parsed Resume Content
+                </h2>
+                <div class="result-content">
+                    <pre>{{ result|safe }}</pre>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+
+        <footer class="footer">
+            <p>&copy; {{ current_year }} Hostme. All rights reserved.</p>
+        </footer>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const dropZone = document.getElementById('dropZone');
+        const fileInput = document.getElementById('resume');
+        const selectedFile = document.getElementById('selectedFile');
+
+        function updateFileName(input) {
+            if (input.files && input.files[0]) {
+                selectedFile.textContent = `Selected: ${input.files[0].name}`;
+                selectedFile.classList.add('animate__animated', 'animate__fadeIn');
+            }
+        }
+
+        dropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropZone.classList.add('drag-over');
+        });
+
+        dropZone.addEventListener('dragleave', (e) => {
+            e.preventDefault();
+            dropZone.classList.remove('drag-over');
+        });
+
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropZone.classList.remove('drag-over');
+            
+            if (e.dataTransfer.files.length) {
+                fileInput.files = e.dataTransfer.files;
+                updateFileName(fileInput);
+            }
+        });
+
+        dropZone.addEventListener('click', () => {
+            fileInput.click();
+        });
+
+        fileInput.addEventListener('change', function() {
+            updateFileName(this);
+        });
+    </script>
+</body>
+</html>

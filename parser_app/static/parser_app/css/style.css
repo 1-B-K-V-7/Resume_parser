@@ -1,0 +1,55 @@
+body {
+    background-color: #f0f2f6;
+    color: #333333;
+}
+
+button {
+    border-radius: 8px;
+    background-color: rgba(0, 122, 255, 0.8);
+    color: white;
+    font-weight: bold;
+    border: none;
+    font-size: 14px;
+    padding: 10px 20px;
+    transition: background-color 0.3s ease;
+}
+
+button:hover {
+    background-color: rgba(0, 122, 255, 1);
+}
+
+.resume-content {
+    font-size: 1.1em;
+    /* Slightly increase the font size */
+    line-height: 1.6;
+    /* Increase line height for better readability */
+    margin-top: 1em;
+}
+
+/* Add styles for different sections of the resume */
+.resume-content h4 {
+    margin-top: 1.5em;
+    border-bottom: 2px solid #007bff;
+    /* Add a blue underline */
+    padding-bottom: 0.5em;
+}
+
+.resume-content ul {
+    list-style-type: disc;
+    /* Add bullet points for lists */
+    margin-left: 20px;
+    /* Indent lists */
+}
+
+.resume-content p {
+    margin-bottom: 1em;
+    /* Space between paragraphs */
+}
+
+/* Add some basic styling for the card */
+.card {
+    border-radius: 0.5rem;
+    /* Round the corners of the card */
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    /* Subtle shadow */
+}
